@@ -142,6 +142,9 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                //since it's not the first one
+                //clear the queue and remove the object. 
+                //add the other one after
                 objManager.Removed();
                 clickedObjects.Clear();
                 clickedObjects.Enqueue(temp);
@@ -162,7 +165,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                clickedObjects.Enqueue(obj);
+                objManager.Invalid();
                 if (clickedObjects.Count > 2)
                 {
                     clickedObjects.Dequeue();
