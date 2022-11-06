@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public GameObject[,,] gameCube;
 
     List<int> typeList;
+    int chosen = -1;
 
     // Start is called before the first frame update
     void Start()
@@ -25,18 +26,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (cubeHolder.transform.childCount == 4)
-        {
-            CheckIfSolvable();
-        }
-
     }
-
-    void CheckIfSolvable()
-    {
-
-    }
-
     void GenerateList()
     {
         typeList = new List<int>();
@@ -46,20 +36,40 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    int ChooseType()
+    int ChooseType(bool isFinal)
     {
-        int i = Random.Range(0, typeList.Count);
-        int x = typeList[i];
-        typeList.RemoveAt(i);
+        int i = -1;
+        int x = -1;
+        if (isFinal)
+        {
+            if (chosen == -1)
+            {
+                i = Random.Range(0, typeList.Count);
+                chosen = i;
+                x = typeList[i];
+            }
+            else
+            {
+                x = typeList[chosen];
+                chosen = -1;
+            }
+        }
+        else
+        {
+            i = Random.Range(0, typeList.Count);
+            x = typeList[i];
+            typeList.RemoveAt(i);
+        }
 
         if (typeList.Count == 0)
             GenerateList();
 
-        Debug.Log(x);
         return x;
     }
+
     void StartSetup()
     {
+        int totalSize = cubeSize * cubeSize * cubeSize;
         GenerateList();
         for (int i = 0; i < cubeSize; i++)
             for (int j = 0; j < cubeSize; j++)
@@ -75,8 +85,9 @@ public class GameManager : MonoBehaviour
                     var objManager = obj.GetComponent<DiceManager>();
                     objManager.ClickedAction += DiceClicked;
                     objManager.cubePosition = new Vector3(i, j, k);
-                    objManager.SetType(ChooseType());
+                    objManager.SetType(ChooseType(totalSize <= 4));
                     gameCube[i, j, k] = obj;
+                    totalSize--;
                 }
     }
 
