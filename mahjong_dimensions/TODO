@@ -1,0 +1,5 @@
+TODO Check if a cube is valid, if it has neighbors
+TODO Give cubes a type (6 types in total)
+TODO Spawn 2 of every type every time (maybe tetris style)
+
+BUG sometimes color is wrong on mouse exit
