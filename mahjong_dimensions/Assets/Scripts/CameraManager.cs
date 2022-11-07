@@ -30,10 +30,10 @@ public class CameraManager : MonoBehaviour
         {
             float difference = (mousePosition - initialMouse).magnitude;
 
-            if (mousePosition.x > Screen.currentResolution.width / 2)
-                baseLevel.transform.Rotate(Vector3.up, difference * ratio * Time.deltaTime, Space.World);
-            else
+            if (mousePosition.x > initialMouse.x)
                 baseLevel.transform.Rotate(Vector3.up, -difference * ratio * Time.deltaTime, Space.World);
+            else
+                baseLevel.transform.Rotate(Vector3.up, difference * ratio * Time.deltaTime, Space.World);
             //this.gameObject.transform.LookAt(Vector3.zero, Vector3.up);
         }
     }

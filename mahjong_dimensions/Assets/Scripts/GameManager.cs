@@ -26,6 +26,12 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (cubeHolder.transform.childCount == 0)
+        {
+            Debug.Log("GameEnd");
+            clickedObjects.Clear();
+            StartSetup();
+        }
     }
     void GenerateList()
     {
@@ -78,7 +84,7 @@ public class GameManager : MonoBehaviour
                     var obj = Instantiate(
                         dicePrefab,
                         transform.position + new Vector3(scale * (i - cubeSize / 2) + scale / 2, scale * j, scale * (k - cubeSize / 2) + scale / 2),
-                        transform.rotation,
+                        Quaternion.identity,
                         this.cubeHolder.transform
                     );
                     obj.transform.localScale = new Vector3(scale, scale, scale);
@@ -165,12 +171,10 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                objManager.Invalid();
-                if (clickedObjects.Count > 2)
-                {
-                    clickedObjects.Dequeue();
-                    tempManager.Removed();
-                }
+                //objManager.Invalid();
+                clickedObjects.Clear();
+                tempManager.Removed();
+                clickedObjects.Enqueue(obj.gameObject);
             }
         }
     }
