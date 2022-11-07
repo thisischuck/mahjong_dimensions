@@ -4,33 +4,39 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public float Timer = 300;//5 minutes
+    public int Score = 0;
     public GameObject dicePrefab;
     public GameObject cubeHolder;
     public int cubeSize = 4;
     public float scale = 0.1f;
     public Queue<GameObject> clickedObjects;
+    public GameObject hudCanvas;
+    public GameObject mainCanvas;
 
     public GameObject[,,] gameCube;
 
     List<int> typeList;
     int chosen = -1;
+    bool started = false;
 
     // Start is called before the first frame update
     void Start()
     {
         clickedObjects = new Queue<GameObject>();
         gameCube = new GameObject[cubeSize, cubeSize, cubeSize];
-        StartSetup();
+        // StartSetup();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (cubeHolder.transform.childCount == 0)
+        if (!started)
+            return;
+        Timer -= Time.deltaTime;
+        if (cubeHolder.transform.childCount == 0 || Timer < 0)
         {
-            Debug.Log("GameEnd");
-            clickedObjects.Clear();
-            StartSetup();
+            GameEnd(cubeHolder.transform.childCount == 0);
         }
     }
     void GenerateList()
@@ -73,8 +79,9 @@ public class GameManager : MonoBehaviour
         return x;
     }
 
-    void StartSetup()
+    public void StartSetup()
     {
+        started = true;
         int totalSize = cubeSize * cubeSize * cubeSize;
         GenerateList();
         for (int i = 0; i < cubeSize; i++)
@@ -117,6 +124,20 @@ public class GameManager : MonoBehaviour
             }
         }
         return n;
+    }
+
+    void Matched()
+    {
+        Score += 100;
+    }
+
+    void GameEnd(bool playerWon)
+    {
+        clickedObjects.Clear();
+        mainCanvas.SetActive(true);
+        this.gameObject.SetActive(false);
+        hudCanvas.SetActive(false);
+        //StartSetup();
     }
 
     void DiceClicked(GameObject obj)
@@ -164,7 +185,7 @@ public class GameManager : MonoBehaviour
 
             if (tempType == objType)
             {
-                Debug.Log("Matched");
+                Matched();
                 clickedObjects.Clear();
                 Destroy(temp.gameObject);
                 Destroy(obj.gameObject);

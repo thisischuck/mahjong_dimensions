@@ -22,7 +22,7 @@ public class DiceManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mat = this.GetComponent<MeshRenderer>();
+        mat = this.GetComponentInChildren<MeshRenderer>();
         ChooseTypeInternal();
         ColorCorrection();
     }
@@ -60,22 +60,22 @@ public class DiceManager : MonoBehaviour
         switch (Type)
         {
             case 1:
-                mainColor = Color.blue;
+                mat.material.SetTextureOffset("_BaseMap", new Vector2(0, 0));
                 break;
             case 2:
-                mainColor = Color.red;
+                mat.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, 0));
                 break;
             case 3:
-                mainColor = Color.green;
+                mat.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, 0));
                 break;
             case 4:
-                mainColor = Color.cyan;
+                mat.material.SetTextureOffset("_BaseMap", new Vector2(0, -0.33f));
                 break;
             case 5:
-                mainColor = Color.magenta;
+                mat.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, -0.33f));
                 break;
             case 6:
-                mainColor = Color.yellow;
+                mat.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, -0.33f));
                 break;
         }
         mat.material.color = mainColor;
