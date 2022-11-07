@@ -17,6 +17,6 @@ public class HudManager : MonoBehaviour
     void Update()
     {
         scoreText.text = gameManager.Score.ToString();
-        TimerText.text = $"{(int)gameManager.Timer / 60}:{(int)gameManager.Timer % 60}";
+        TimerText.text = $"{(int)gameManager.timerInternal / 60}:{(int)gameManager.timerInternal % 60}";
     }
 }

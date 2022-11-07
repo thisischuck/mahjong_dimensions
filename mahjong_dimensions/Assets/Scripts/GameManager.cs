@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public float Timer = 300;//5 minutes
+    [HideInInspector]
+    public float timerInternal = 0;
     public int Score = 0;
     public GameObject dicePrefab;
     public GameObject cubeHolder;
@@ -19,13 +21,25 @@ public class GameManager : MonoBehaviour
     List<int> typeList;
     int chosen = -1;
     bool started = false;
+    bool paused = false;
+
+
+    public float ratio = 1f;
+    Vector3 initialMouse;
+    Vector3 mousePosition;
 
     // Start is called before the first frame update
     void Start()
     {
         clickedObjects = new Queue<GameObject>();
         gameCube = new GameObject[cubeSize, cubeSize, cubeSize];
+        timerInternal = Timer;
         // StartSetup();
+    }
+
+    public void PauseGame()
+    {
+        paused = !paused;
     }
 
     // Update is called once per frame
@@ -33,12 +47,32 @@ public class GameManager : MonoBehaviour
     {
         if (!started)
             return;
-        Timer -= Time.deltaTime;
-        if (cubeHolder.transform.childCount == 0 || Timer < 0)
+
+        if (!paused)
         {
-            GameEnd(cubeHolder.transform.childCount == 0);
+            mousePosition = Input.mousePosition;
+            if (Input.GetMouseButtonDown(0))
+            {
+                initialMouse = mousePosition;
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                float difference = (mousePosition - initialMouse).magnitude;
+
+                if (mousePosition.x > initialMouse.x)
+                    cubeHolder.transform.Rotate(Vector3.up, -difference * ratio * Time.deltaTime, Space.World);
+                else
+                    cubeHolder.transform.Rotate(Vector3.up, difference * ratio * Time.deltaTime, Space.World);
+
+            }
+            timerInternal -= Time.deltaTime;
+            if (cubeHolder.transform.childCount == 0 || timerInternal < 0)
+            {
+                GameEnd(cubeHolder.transform.childCount == 0);
+            }
         }
     }
+
     void GenerateList()
     {
         typeList = new List<int>();
@@ -81,6 +115,7 @@ public class GameManager : MonoBehaviour
 
     public void StartSetup()
     {
+        timerInternal = Timer;
         started = true;
         int totalSize = cubeSize * cubeSize * cubeSize;
         GenerateList();
@@ -126,18 +161,24 @@ public class GameManager : MonoBehaviour
         return n;
     }
 
-    void Matched()
+    void Matched(GameObject a, GameObject b)
     {
         Score += 100;
+        //PlayCubeAnimation
     }
 
     void GameEnd(bool playerWon)
     {
+        started = false;
         clickedObjects.Clear();
         mainCanvas.SetActive(true);
-        this.gameObject.SetActive(false);
+        mainCanvas.transform.Find(playerWon ? "YouWin" : "GameOver").gameObject.SetActive(true);
         hudCanvas.SetActive(false);
-        //StartSetup();
+        if (!playerWon)
+        {
+            foreach (var obj in cubeHolder.transform.GetComponentsInChildren<DiceManager>())
+                Destroy(obj.gameObject);
+        }
     }
 
     void DiceClicked(GameObject obj)
@@ -185,7 +226,7 @@ public class GameManager : MonoBehaviour
 
             if (tempType == objType)
             {
-                Matched();
+                Matched(temp, obj);
                 clickedObjects.Clear();
                 Destroy(temp.gameObject);
                 Destroy(obj.gameObject);
