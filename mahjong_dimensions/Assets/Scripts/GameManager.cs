@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using TMPro;
 public class GameManager : MonoBehaviour
 {
     public float Timer = 300;//5 minutes
@@ -181,6 +182,8 @@ public class GameManager : MonoBehaviour
         clickedObjects.Clear();
         mainCanvas.SetActive(true);
         mainCanvas.transform.Find(playerWon ? "YouWin" : "GameOver").gameObject.SetActive(true);
+        mainCanvas.transform.Find("Score").gameObject.SetActive(true);
+        mainCanvas.transform.Find("Score").GetComponent<TextMeshProUGUI>().text = Score.ToString();
         hudCanvas.SetActive(false);
         if (!playerWon)
         {
