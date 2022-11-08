@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public float timerInternal = 0;
     public int Score = 0;
+    [HideInInspector]
+    public int scoreToAdd = 0;
     public GameObject dicePrefab;
     public GameObject cubeHolder;
     public int cubeSize = 4;
@@ -15,6 +17,7 @@ public class GameManager : MonoBehaviour
     public Queue<GameObject> clickedObjects;
     public GameObject hudCanvas;
     public GameObject mainCanvas;
+    public int multiplier = 1;
 
     public GameObject[,,] gameCube;
 
@@ -29,9 +32,10 @@ public class GameManager : MonoBehaviour
     Vector3 mousePosition;
 
     public UnityAction PauseAction;
+    public UnityAction MatchedAction;
 
-    int multiplier = 1;
     bool matched = false;
+    float timeSinceLastMatch = 4;
 
     // Start is called before the first frame update
     void Start()
@@ -72,6 +76,9 @@ public class GameManager : MonoBehaviour
 
             }
             timerInternal -= Time.deltaTime;
+
+            timeSinceLastMatch += Time.deltaTime;
+
             if (cubeHolder.transform.childCount == 0 || timerInternal < 0)
             {
                 GameEnd(cubeHolder.transform.childCount == 0);
@@ -227,10 +234,20 @@ public class GameManager : MonoBehaviour
 
             if (tempType == objType)
             {
-                Score += 100 * multiplier;
+                if (timeSinceLastMatch < 3)
+                {
+                    multiplier++;
+                }
+                else
+                    multiplier = 1;
+
+                scoreToAdd = 100 * multiplier;
+                Score += scoreToAdd;
                 clickedObjects.Clear();
                 tempManager.Matched();
                 objManager.Matched();
+                timeSinceLastMatch = 0;
+                MatchedAction.Invoke();
             }
             else
             {

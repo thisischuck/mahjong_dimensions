@@ -9,6 +9,8 @@ public class DiceManager : MonoBehaviour
     public Vector3 cubePosition;
     public Renderer mainRenderer;
     public Renderer subRenderer;
+    public ParticleSystemRenderer particleSystem;
+    public AudioSource src;
     private bool isHovered = false;
     private bool clicked = false;
     private Animator anim;
@@ -25,6 +27,7 @@ public class DiceManager : MonoBehaviour
     void Start()
     {
         anim = this.GetComponent<Animator>();
+        src.pitch = Random.Range(0.8f, 1.2f);
         ChooseTypeInternal();
         ColorCorrection();
     }
@@ -80,26 +83,32 @@ public class DiceManager : MonoBehaviour
             case 1:
                 mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0, 0));
                 subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0, 0));
+                particleSystem.material.SetTextureOffset("_BaseMap", new Vector2(0, 0));
                 break;
             case 2:
                 mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, 0));
                 subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, 0));
+                particleSystem.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, 0));
                 break;
             case 3:
                 mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, 0));
                 subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, 0));
+                particleSystem.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, 0));
                 break;
             case 4:
                 mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0, -0.33f));
                 subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0, -0.33f));
+                particleSystem.material.SetTextureOffset("_BaseMap", new Vector2(0, -0.33f));
                 break;
             case 5:
                 mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, -0.33f));
                 subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, -0.33f));
+                particleSystem.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, -0.33f));
                 break;
             case 6:
                 mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, -0.33f));
                 subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, -0.33f));
+                particleSystem.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, -0.33f));
                 break;
         }
         mainRenderer.material.color = mainColor;
