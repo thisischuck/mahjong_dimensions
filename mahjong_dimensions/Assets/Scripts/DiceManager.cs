@@ -7,9 +7,11 @@ public class DiceManager : MonoBehaviour
 {
     public int Type;
     public Vector3 cubePosition;
-    private Renderer mat;
+    public Renderer mainRenderer;
+    public Renderer subRenderer;
     private bool isHovered = false;
     private bool clicked = false;
+    private Animator anim;
 
     Color mainColor = Color.gray;
     Color clickedColor = Color.red;
@@ -22,7 +24,7 @@ public class DiceManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mat = this.GetComponentInChildren<MeshRenderer>();
+        anim = this.GetComponent<Animator>();
         ChooseTypeInternal();
         ColorCorrection();
     }
@@ -55,46 +57,68 @@ public class DiceManager : MonoBehaviour
         Type = type;
     }
 
+    public void Pause()
+    {
+        this.gameObject.layer = this.gameObject.layer == 2 ? 0 : 2;
+    }
+
+    public void DestroyMe()
+    {
+        Debug.Log("Called");
+        Destroy(this.gameObject);
+    }
+
+    public void Matched()
+    {
+        anim.Play("Matched");
+    }
+
     public void ChooseTypeInternal()
     {
         switch (Type)
         {
             case 1:
-                mat.material.SetTextureOffset("_BaseMap", new Vector2(0, 0));
+                mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0, 0));
+                subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0, 0));
                 break;
             case 2:
-                mat.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, 0));
+                mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, 0));
+                subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, 0));
                 break;
             case 3:
-                mat.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, 0));
+                mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, 0));
+                subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, 0));
                 break;
             case 4:
-                mat.material.SetTextureOffset("_BaseMap", new Vector2(0, -0.33f));
+                mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0, -0.33f));
+                subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0, -0.33f));
                 break;
             case 5:
-                mat.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, -0.33f));
+                mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, -0.33f));
+                subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.33f, -0.33f));
                 break;
             case 6:
-                mat.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, -0.33f));
+                mainRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, -0.33f));
+                subRenderer.material.SetTextureOffset("_BaseMap", new Vector2(0.66f, -0.33f));
                 break;
         }
-        mat.material.color = mainColor;
+        mainRenderer.material.color = mainColor;
     }
-
     public void Invalid()
     {
+        anim.Play("Invalid");
         clicked = false;
         isHovered = false;
     }
     public void Removed()
     {
-        mat.material.color = mainColor;
+        mainRenderer.material.color = mainColor;
         clicked = false;
         isHovered = false;
     }
     void OnMouseEnter()
     {
-        mat.material.color = hoveredColor;
+        mainRenderer.material.color = hoveredColor;
     }
     void OnMouseOver()
     {
@@ -105,9 +129,9 @@ public class DiceManager : MonoBehaviour
         isHovered = false;
         if (clicked)
         {
-            mat.material.color = clickedColor;
+            mainRenderer.material.color = clickedColor;
         }
         else
-            mat.material.color = mainColor;
+            mainRenderer.material.color = mainColor;
     }
 }

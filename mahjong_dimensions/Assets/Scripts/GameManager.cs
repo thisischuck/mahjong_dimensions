@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Events;
 public class GameManager : MonoBehaviour
 {
     public float Timer = 300;//5 minutes
@@ -28,6 +28,11 @@ public class GameManager : MonoBehaviour
     Vector3 initialMouse;
     Vector3 mousePosition;
 
+    public UnityAction PauseAction;
+
+    int multiplier = 1;
+    bool matched = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,6 +44,7 @@ public class GameManager : MonoBehaviour
 
     public void PauseGame()
     {
+        PauseAction.Invoke();
         paused = !paused;
     }
 
@@ -132,6 +138,7 @@ public class GameManager : MonoBehaviour
                     obj.transform.localScale = new Vector3(scale, scale, scale);
                     var objManager = obj.GetComponent<DiceManager>();
                     objManager.ClickedAction += DiceClicked;
+                    PauseAction += objManager.Pause;
                     objManager.cubePosition = new Vector3(i, j, k);
                     objManager.SetType(ChooseType(totalSize <= 4));
                     gameCube[i, j, k] = obj;
@@ -159,12 +166,6 @@ public class GameManager : MonoBehaviour
             }
         }
         return n;
-    }
-
-    void Matched(GameObject a, GameObject b)
-    {
-        Score += 100;
-        //PlayCubeAnimation
     }
 
     void GameEnd(bool playerWon)
@@ -226,14 +227,14 @@ public class GameManager : MonoBehaviour
 
             if (tempType == objType)
             {
-                Matched(temp, obj);
+                Score += 100 * multiplier;
                 clickedObjects.Clear();
-                Destroy(temp.gameObject);
-                Destroy(obj.gameObject);
+                tempManager.Matched();
+                objManager.Matched();
             }
             else
             {
-                //objManager.Invalid();
+                //tempManager.Invalid();
                 clickedObjects.Clear();
                 tempManager.Removed();
                 clickedObjects.Enqueue(obj.gameObject);
