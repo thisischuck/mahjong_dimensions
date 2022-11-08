@@ -129,8 +129,11 @@ public class GameManager : MonoBehaviour
 
     public void StartSetup()
     {
+        Score = 0;
         timerInternal = Timer;
         started = true;
+        multiplier = 1;
+        timeSinceLastMatch = 4;
         int totalSize = cubeSize * cubeSize * cubeSize;
         GenerateList();
         for (int i = 0; i < cubeSize; i++)
